@@ -39,8 +39,9 @@ public class Indicators {
         effectivenes = 0;
     }
 
-    public void generateIndicators(){
-        processLinesFileGold();
+    public void generateIndicators(String pathFile){
+
+        processLinesFileGold(pathFile);
         fillEmptyLabels();
 
         calculateIndicatorPrecision();
@@ -49,18 +50,19 @@ public class Indicators {
 
         graphIndicators();
 
-        System.out.println(amountTotalByGoldLabels);
-        System.out.println(amountTotalByEstimatedLabels);
-        System.out.println(amountCorrectByEstimatedLabels);
+        System.out.println("Efectividad: " + effectivenes + "%");
+        System.out.println("Anotadas:\t" + amountTotalByGoldLabels);
+        System.out.println("Estimadas:\t" + amountTotalByEstimatedLabels);
+        System.out.println("Correctas:\t" + amountCorrectByEstimatedLabels);
 
-        System.out.println(precisionIndicatorByLabel);
-        System.out.println(recallIndicatorByLabel);
-        System.out.println(fscoreIndicatorByLabel);
+        System.out.println("Precision:\t" + precisionIndicatorByLabel);
+        System.out.println("Recall:\t\t" + recallIndicatorByLabel);
+        System.out.println("Fscore:\t\t" + fscoreIndicatorByLabel);
     }
 
-    private void processLinesFileGold(){
+    private void processLinesFileGold(String pathFile){
         Util util = new Util();
-        ArrayList<String> linesFileGold = util.readGoldFile();
+        ArrayList<String> linesFileGold = util.readGoldFile(pathFile);
         totalComments = linesFileGold.size();
 
         for(int i=0; i<linesFileGold.size(); i++){
@@ -77,7 +79,6 @@ public class Indicators {
         while (stLine.hasMoreTokens()){
             String token = stLine.nextToken();
             if(posToken == 0){
-//                System.out.print(token+" | ");
                 goldLabel = token;
                 if(amountTotalByGoldLabels.containsKey(goldLabel)){
                     int tempAmount = amountTotalByGoldLabels.get(goldLabel);
@@ -88,7 +89,6 @@ public class Indicators {
                 }
             }
             else if(posToken == 1){
-//                System.out.print(token+" | ");
                 estimatedLabel = token;
                 if(amountTotalByEstimatedLabels.containsKey(estimatedLabel)){
                     int tempAmount = amountTotalByEstimatedLabels.get(estimatedLabel);
@@ -99,7 +99,6 @@ public class Indicators {
                 }
             }
             else if(posToken == 2){
-//                System.out.print(token+" | ");
                 int flag = Integer.parseInt(token);
                 if(flag == 1){
                     if(amountCorrectByEstimatedLabels.containsKey(estimatedLabel)){
@@ -115,7 +114,6 @@ public class Indicators {
             }
             posToken++;
         }
-//        System.out.println();
     }
 
     private void fillEmptyLabels(){

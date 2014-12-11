@@ -34,11 +34,17 @@ public class Util {
         return rutaArchivo;
     }
 
-    public ArrayList<String> readGoldFile() {
+    public ArrayList<String> readGoldFile(String pathFile) {
 
         ArrayList<String> linesGoldFile = new ArrayList<String>();
         try{
-            String path = getPathFile("txt");
+            String path = "";
+            if(pathFile == null){
+                path = getPathFile("txt");
+            }
+            else {
+                path = pathFile;
+            }
             file = new File(path);
             reader = new FileReader(file);
             bufferedReader = new BufferedReader(reader);

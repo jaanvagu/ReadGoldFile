@@ -1,0 +1,5 @@
+Etiqueta_A	Etiqueta_A	1	Mensaje
+Etiqueta_A	Etiqueta_B	0	Mensaje
+Etiqueta_B	Etiqueta_B	1	Mensaje
+Etiqueta_C	Etiqueta_A	0	Mensaje
+Etiqueta_C	Etiqueta_C	1	Mensaje
