@@ -92,4 +92,14 @@ public class Util {
         }
     }
 
+    public static float getPecentageFromAmountOfTotal(float amount, float total) {
+
+        float percentage = 0f;
+        if(total != 0) {
+            percentage = (amount / total) * 100f;
+        }
+
+        return percentage;
+    }
+
 }

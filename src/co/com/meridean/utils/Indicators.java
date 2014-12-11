@@ -5,6 +5,11 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
+import org.jfree.chart.*;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.DefaultCategoryDataset;
+
+import javax.swing.*;
 
 public class Indicators {
 
@@ -16,6 +21,10 @@ public class Indicators {
     private Hashtable<String, Double> recallIndicatorByLabel;
     private Hashtable<String, Double> fscoreIndicatorByLabel;
 
+    private int totalComments;
+    private int totalSuccesses;
+    private int effectivenes;
+
     public Indicators() {
         amountTotalByGoldLabels         = new Hashtable<String, Integer>();
         amountTotalByEstimatedLabels    = new Hashtable<String, Integer>();
@@ -24,22 +33,21 @@ public class Indicators {
         precisionIndicatorByLabel       = new Hashtable<String, Double>();
         recallIndicatorByLabel          = new Hashtable<String, Double>();
         fscoreIndicatorByLabel          = new Hashtable<String, Double>();
+
+        totalComments = 0;
+        totalSuccesses = 0;
+        effectivenes = 0;
     }
 
-    public void processLinesFileGold(){
-        Util util = new Util();
-        ArrayList<String> linesFileGold = util.readGoldFile();
-
-        for(int i=0; i<linesFileGold.size(); i++){
-            String line = linesFileGold.get(i);
-            processLine(line);
-        }
-
+    public void generateIndicators(){
+        processLinesFileGold();
         fillEmptyLabels();
 
         calculateIndicatorPrecision();
         calculateIndicatorRecall();
         calculateIndicatorFscore();
+
+        graphIndicators();
 
         System.out.println(amountTotalByGoldLabels);
         System.out.println(amountTotalByEstimatedLabels);
@@ -50,6 +58,17 @@ public class Indicators {
         System.out.println(fscoreIndicatorByLabel);
     }
 
+    private void processLinesFileGold(){
+        Util util = new Util();
+        ArrayList<String> linesFileGold = util.readGoldFile();
+        totalComments = linesFileGold.size();
+
+        for(int i=0; i<linesFileGold.size(); i++){
+            String line = linesFileGold.get(i);
+            processLine(line);
+        }
+    }
+
     private void processLine(String line){
         String goldLabel = "";
         String estimatedLabel = "";
@@ -58,6 +77,7 @@ public class Indicators {
         while (stLine.hasMoreTokens()){
             String token = stLine.nextToken();
             if(posToken == 0){
+//                System.out.print(token+" | ");
                 goldLabel = token;
                 if(amountTotalByGoldLabels.containsKey(goldLabel)){
                     int tempAmount = amountTotalByGoldLabels.get(goldLabel);
@@ -68,6 +88,7 @@ public class Indicators {
                 }
             }
             else if(posToken == 1){
+//                System.out.print(token+" | ");
                 estimatedLabel = token;
                 if(amountTotalByEstimatedLabels.containsKey(estimatedLabel)){
                     int tempAmount = amountTotalByEstimatedLabels.get(estimatedLabel);
@@ -78,19 +99,23 @@ public class Indicators {
                 }
             }
             else if(posToken == 2){
+//                System.out.print(token+" | ");
                 int flag = Integer.parseInt(token);
                 if(flag == 1){
                     if(amountCorrectByEstimatedLabels.containsKey(estimatedLabel)){
                         int tempAmount = amountCorrectByEstimatedLabels.get(estimatedLabel);
                         amountCorrectByEstimatedLabels.put(estimatedLabel, ++tempAmount);
+                        totalSuccesses++;
                     }
                     else{
                         amountCorrectByEstimatedLabels.put(estimatedLabel, 1);
+                        totalSuccesses++;
                     }
                 }
             }
             posToken++;
         }
+//        System.out.println();
     }
 
     private void fillEmptyLabels(){
@@ -151,5 +176,36 @@ public class Indicators {
 
             fscoreIndicatorByLabel.put(label, indicatorFscore);
         }
+    }
+
+    private void graphIndicators(){
+
+        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+
+        Enumeration<String> labels = amountTotalByGoldLabels.keys();
+        while (labels.hasMoreElements()){
+            String label = labels.nextElement();
+            double precision = precisionIndicatorByLabel.get(label) * 100.0;
+            double recall    = recallIndicatorByLabel.get(label)    * 100.0;
+            double fscore    = fscoreIndicatorByLabel.get(label)    * 100.0;
+            dataset.setValue(precision, "Precision", label);
+            dataset.setValue(recall,    "Recall",    label);
+            dataset.setValue(fscore,    "Fscore",    label);
+        }
+
+        effectivenes = (int) Util.getPecentageFromAmountOfTotal(totalSuccesses, totalComments);
+
+        JFreeChart chart = ChartFactory.createBarChart3D("Indicadores (" + effectivenes
+                                                        + "% | " + totalSuccesses + " de " + totalComments +  ")",
+                                "Categorías",
+                                "Porcentaje", dataset, PlotOrientation.VERTICAL, true, true, false);
+
+        ChartPanel panel = new ChartPanel(chart);
+
+        JFrame ventana = new JFrame("Evaluación Clasificador");
+        ventana.getContentPane().add(panel);
+        ventana.pack();
+        ventana.setVisible(true);
+        ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 }
