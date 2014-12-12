@@ -21,9 +21,9 @@ Se puede usar de dos maneras:
 **Nota**: Para la ejecución del jar no se necesita seguir los pasos de instalación.
 
 ## Ejemplo de Uso
-`java -jar ReadGoldFile.jar /examples/gold_file.txt`
+`java -jar ReadGoldFile.jar examples/gold_file.txt`
 ##### Formato (Separación por tab):
 
-`<Etiqueta_Anotada>  <Etiqueta_Estimada> <Flag_Coinciden>  <Mensaje>`
+`<Etiqueta_Anotada>  <Etiqueta_Estimada> <Flag_Coinciden>`
 
 **Nota**: En la carpeta examples se encuentra un archivo de ejemplo.
