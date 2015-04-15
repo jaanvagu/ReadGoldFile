@@ -19,7 +19,7 @@ public class Util {
     public String getPathFile(String tipo) {
         int opcionSeleccionada;
         String rutaArchivo = "";
-        fileSelector = new JFileChooser("/home/meridean-hp/repositorios/miau/gold_files");
+        fileSelector = new JFileChooser("/home/meridean-hp/repositorios/RestServicesPeopleVector/data");
         filter = new FileNameExtensionFilter("Archivos de texto (."+tipo+")", tipo);
         fileSelector.setFileFilter(filter);
         opcionSeleccionada = fileSelector.showOpenDialog(fileSelector);
@@ -58,16 +58,6 @@ public class Util {
         }
 
         return linesGoldFile;
-    }
-
-    public void createTextFile(){
-        try{
-            file = new File("C:/Users/Meridean HP/Desktop/cleanText.txt");
-            writer = new FileWriter(file);
-            bufferWriter = new BufferedWriter(writer);
-        } catch (Exception e){
-            System.err.println("Problema creando file" + e.getMessage());
-        }
     }
 
     public void closeTextFile(){
